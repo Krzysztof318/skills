@@ -10,5 +10,15 @@
   },
   "homepage": "https://github.com/Krzysztof318/skills",
   "repository": "https://github.com/Krzysztof318/skills",
-  "keywords": ["uno-platform", "xaml", "dotnet", "ui", "design-review", "accessibility"]
+  "keywords": [
+    "uno-platform",
+    "xaml",
+    "dotnet",
+    "ui",
+    "design-review",
+    "accessibility"
+  ],
+  "metadata": {
+    "copyright": "Copyright © 2026 Krzysztof Kasprowicz"
+  }
 }

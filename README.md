@@ -3,6 +3,28 @@
 Skills for Claude Code, distributed as a marketplace. Each plugin groups the skills for one
 platform, so installing one does not put unrelated skills in front of the model.
 
+## Layout
+
+Every skill lives once, at the root, under `skills/<name>/`. A plugin does not hold copies: it links
+the skills it carries, one symlink per skill.
+
+```
+skills/uno-design-review/SKILL.md                     the skill itself
+plugins/uno-skills/skills/uno-design-review  ->  ../../../skills/uno-design-review
+```
+
+The link is per skill rather than over the whole `skills/` directory on purpose. A directory-wide
+link would hand every future skill to whichever plugin holds it, which is exactly what one plugin per
+platform is meant to prevent. A plugin's `skills/` therefore reads as the list of what it carries.
+
+Claude Code follows these links when it loads a plugin, both from `--plugin-dir` and from a
+marketplace install, where a link resolving elsewhere in the same marketplace is dereferenced into
+the plugin cache. `claude plugin validate` does *not* follow them and says so; validate `skills/`
+directly, which is the real path.
+
+Git stores the links as symlinks (mode `120000`). A clone on Windows needs `core.symlinks` for them
+to arrive as links rather than as text files.
+
 ## Install
 
 ```
