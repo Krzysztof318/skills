@@ -10,6 +10,7 @@
   },
   "homepage": "https://github.com/Krzysztof318/skills",
   "repository": "https://github.com/Krzysztof318/skills",
+  "license": "MIT",
   "keywords": [
     "uno-platform",
     "xaml",
