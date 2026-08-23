@@ -1,0 +1,14 @@
+{
+  "$schema": "https://json.schemastore.org/claude-code-plugin-manifest.json",
+  "name": "uno-skills",
+  "displayName": "Uno Platform Skills",
+  "version": "0.1.0",
+  "description": "Review skills for Uno Platform application UI: theming discipline, adaptive layout, list virtualization, state completeness, platform feel, and accessibility.",
+  "author": {
+    "name": "Krzysztof Kasprowicz",
+    "url": "https://github.com/Krzysztof318"
+  },
+  "homepage": "https://github.com/Krzysztof318/skills",
+  "repository": "https://github.com/Krzysztof318/skills",
+  "keywords": ["uno-platform", "xaml", "dotnet", "ui", "design-review", "accessibility"]
+}
