@@ -1,6 +1,11 @@
 ---
 name: uno-design-review
 description: Use before shipping an Uno Platform screen, page, or XAML layout. Reviews what was built for theming discipline, adaptive layout, list virtualization, state completeness, platform feel, accessibility, and placeholder content. Trigger on "review this screen", "is this page ready", "check this XAML", or when a screen is implemented and about to be committed. Also use when a screen looks generic, cramped, or unfinished and the reason is not obvious.
+license: MIT
+metadata:
+  author: Krzysztof Kasprowicz
+  copyright: Copyright © 2026 Krzysztof Kasprowicz
+  repository: https://github.com/Krzysztof318/skills
 ---
 
 # Uno Design Review

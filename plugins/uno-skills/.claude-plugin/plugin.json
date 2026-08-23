@@ -18,5 +18,8 @@
     "ui",
     "design-review",
     "accessibility"
-  ]
+  ],
+  "metadata": {
+    "copyright": "Copyright © 2026 Krzysztof Kasprowicz"
+  }
 }
