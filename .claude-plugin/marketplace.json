@@ -1,7 +1,7 @@
 {
   "$schema": "https://json.schemastore.org/claude-code-marketplace.json",
   "name": "krzysztof318-skills",
-  "description": "Skills for Claude Code, grouped into one plugin per platform.",
+  "description": "Skills for Claude Code and Codex, grouped into one plugin per platform.",
   "owner": {
     "name": "Krzysztof Kasprowicz",
     "url": "https://github.com/Krzysztof318"
@@ -11,7 +11,7 @@
       "name": "uno-skills",
       "source": "./plugins/uno-skills",
       "description": "Review skills for Uno Platform application UI. Complements Uno's own documentation and skills rather than restating them.",
-      "version": "0.1.0"
+      "version": "0.2.0"
     }
   ]
 }
