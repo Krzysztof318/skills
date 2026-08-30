@@ -9,7 +9,8 @@ Every skill lives inside the plugin that carries it, as ordinary files:
 
 ```
 plugins/uno-skills/.claude-plugin/plugin.json      the plugin manifest
-plugins/uno-skills/skills/uno-design-review/       the skill itself
+plugins/uno-skills/skills/uno-ux-design/           the skill itself
+plugins/uno-skills/skills/uno-design-review/       ... and the review it feeds
 ```
 
 A plugin's `skills/` therefore reads as the list of what it carries, which is what one plugin per
@@ -55,19 +56,26 @@ plugin. Claude Code reads `--plugin-dir` from disk on every start.
 
 | Plugin | Skills | For |
 | --- | --- | --- |
-| `uno-skills` | `uno-design-review` | Uno Platform application UI |
+| `uno-skills` | `uno-ux-design`, `uno-design-review` | Uno Platform application UI |
 
 ### `uno-skills`
 
 Uno documents its own surface, and Uno Platform Studio ships skills covering MVUX, navigation, the
 Toolkit, and theming. This plugin does not restate any of it. It carries what those leave out: the
-judgement about whether a screen is good enough to ship.
+judgement about how a screen should be designed, and whether it is good enough to ship.
 
+- **`uno-ux-design`** - run before the XAML exists. The first half of a screen: the one action,
+  the hierarchy, the density, the states, the motion, and the few style decisions worth making,
+  with the numbers an Uno screen starts from - the spacing scale, the Toolkit's breakpoints, the
+  touch-target minimums, the motion durations. Its handoff is the review.
 - **`uno-design-review`** - run before shipping a screen. A ledger of the defects that survive a
   green build, each with the signature that reveals it, the search that finds it, and the response
-  that repairs it. Covers theming discipline, adaptive layout, list virtualization, state
-  completeness, platform feel, accessibility, and placeholder content. Uses the Uno App MCP for the
-  visual checks where it is available, and says so when it is not.
+  that repairs it. Covers hierarchy, theming discipline, adaptive layout, list virtualization,
+  state completeness, form usability, navigation integrity, platform feel, visual consistency,
+  accessibility, and placeholder content. Uses the Uno App MCP for the visual checks where it is
+  available, and says so when it is not.
 
-In Claude Code it is invoked as `/uno-skills:uno-design-review`. In Codex it is loaded from the
-installed plugin and picked up from its description - ask for a screen review before shipping.
+In Claude Code they are invoked as `/uno-skills:uno-ux-design` and
+`/uno-skills:uno-design-review`. In Codex they are loaded from the installed plugin and picked up
+from their descriptions - ask for a screen design before building, and a screen review before
+shipping.
