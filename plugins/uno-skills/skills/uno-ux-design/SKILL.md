@@ -1,6 +1,6 @@
 ---
 name: uno-ux-design
-description: Use when designing an Uno Platform screen, page, or feature - before or while writing the XAML. Turns a brief into structure: the one action, the hierarchy, the density, the states, the motion, and the few style decisions worth making. Trigger on "design this screen", "how should this page work", "what does this feature need", or when a screen is about to be built and no layout exists yet. Pairs with uno-design-review, which grades what this skill produces.
+description: Use when designing an Uno Platform screen, page, or feature - before or while writing the XAML. Turns a brief into structure - the one action, the hierarchy, the density, the states, the motion, and the few style decisions worth making. Trigger on "design this screen", "how should this page work", "what does this feature need", or when a screen is about to be built and no layout exists yet. Pairs with uno-design-review, which grades what this skill produces.
 license: MIT
 metadata:
   author: Krzysztof Kasprowicz
