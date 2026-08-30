@@ -10,8 +10,8 @@
     {
       "name": "uno-skills",
       "source": "./plugins/uno-skills",
-      "description": "Review skills for Uno Platform application UI. Complements Uno's own documentation and skills rather than restating them.",
-      "version": "0.2.0"
+      "description": "UX design and review skills for Uno Platform application UI. Complements Uno's own documentation and skills rather than restating them.",
+      "version": "0.3.0"
     }
   ]
 }

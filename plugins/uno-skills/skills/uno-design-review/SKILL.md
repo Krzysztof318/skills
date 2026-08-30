@@ -1,6 +1,6 @@
 ---
 name: uno-design-review
-description: Use before shipping an Uno Platform screen, page, or XAML layout. Reviews what was built for theming discipline, adaptive layout, list virtualization, state completeness, platform feel, accessibility, and placeholder content. Trigger on "review this screen", "is this page ready", "check this XAML", or when a screen is implemented and about to be committed. Also use when a screen looks generic, cramped, or unfinished and the reason is not obvious.
+description: Use before shipping an Uno Platform screen, page, or XAML layout. Reviews what was built for hierarchy, theming discipline, adaptive layout, list virtualization, state completeness, form usability, navigation integrity, platform feel, visual consistency, accessibility, and placeholder content. Trigger on "review this screen", "is this page ready", "check this XAML", or when a screen is implemented and about to be committed. Also use when a screen looks generic, cramped, or unfinished and the reason is not obvious.
 license: MIT
 metadata:
   author: Krzysztof Kasprowicz
@@ -13,6 +13,9 @@ metadata:
 A screen that compiles is not a screen that is done. This skill is the last filter before an Uno
 Platform screen ships: a ledger of the defects that survive a green build, each with the signature
 that reveals it, the search that finds it, and the response that repairs it.
+
+It is the counterpart of `uno-ux-design`, which makes the design decisions before the XAML exists.
+A finding in this ledger is usually a design decision that was made in the code instead of there.
 
 Findings are reported against the built screen, never against a guess about it. Every finding names
 a file and a line.
@@ -54,6 +57,48 @@ Three levels. Apply the weakest one that prevents the defect.
 
 Each rule states the level, what it forbids, the signature that reveals it, how to find it, when it
 does not apply, and what to do instead.
+
+### Hierarchy
+
+#### HIE-001 - Two competing primary actions
+- **Level:** AVOID BY DEFAULT
+- **Rule:** A screen has one primary action. A second element in the primary's visual register is
+  a claim the screen cannot keep.
+- **Failure signature:** Two filled, accent-background buttons side by side - Save and Delete,
+  Buy and Compare - or three headings at the same size and weight in one viewport.
+- **Detection:** Count the elements per page that carry the theme's primary style or the largest
+  typography role. More than one is the finding.
+- **Exception:** Two genuinely equal choices the product names as equal - Approve and Reject in
+  an approval flow - stated as such in the design.
+- **Preferred response:** One primary. Everything else secondary, quiet, or icon. The primary is
+  where the eye lands first; when two elements both demand that landing, the screen has not said
+  what it is for.
+
+#### HIE-002 - A flat hierarchy
+- **Level:** AVOID BY DEFAULT
+- **Rule:** The eye needs a landing point. A screen where every element carries the same weight
+  gives it none.
+- **Failure signature:** One font size and one weight across a whole page; no element larger or
+  stronger than any other; a card list in which title, detail, and timestamp all read as
+  first-class.
+- **Detection:** Count the distinct typography styles a page uses. Fewer than three across a
+  screen that carries a title, body, and metadata is the signature.
+- **Exception:** A screen that is a single role - a full-bleed list of same-shape rows.
+- **Preferred response:** Primary, secondary, tertiary. Spend size, weight, and contrast on
+  importance, and spend them only once.
+
+#### HIE-003 - The primary action below the fold
+- **Level:** CONTEXTUAL WARNING
+- **Rule:** The first screenful is the screen. On a narrow width, the primary action is visible
+  without scrolling.
+- **Failure signature:** A phone-width screenshot in which the only filled button sits under
+  three paragraphs of copy.
+- **Detection:** Screenshot at a narrow width and look for the primary action before the scroll
+  edge.
+- **Exception:** A content screen whose action is the point of the reading - the comment box at
+  the end of the article - stated as a deliberate design.
+- **Preferred response:** Move the action up, into a command bar, or into the header. A warning
+  with a cost: on desktop the fold is far, so state the width at which this was judged.
 
 ### Theming and tokens
 
@@ -258,6 +303,48 @@ does not apply, and what to do instead.
 - **Preferred response:** `IsEnabled`. It carries the visual, the hit-testing, and the accessibility
   announcement together; opacity carries the first and lies about the other two.
 
+### Forms and input
+
+#### FRM-001 - An error rendered away from its field
+- **Level:** HARD BAN
+- **Rule:** A field-level error renders beside the field, in the person's terms, and focus goes
+  to it.
+- **Failure signature:** A form validation fails and the only sign of it is a toast, a dialog, or
+  a red banner at the top of the screen, while the invalid field sits unmarked and focus stays
+  where it was. The person is asked to find which field failed.
+- **Detection:** Read the validation path. For each field, ask where its error renders, what it
+  says, and where focus lands on failure.
+- **Exception:** A screen-level failure that belongs to no single field - the account is locked -
+  which is a screen error, not a field error.
+- **Preferred response:** Error text under or beside the field, a state the field visibly carries,
+  and focus moved to the first invalid field. A summary is allowed as an addition, never as the
+  whole of it.
+
+#### FRM-002 - Input destroyed by a failed save
+- **Level:** HARD BAN
+- **Rule:** A failed write keeps what the person typed.
+- **Failure signature:** A save fails on the server and the form reloads, resets, or clears the
+  failed field - and the person types it again, not knowing which attempt failed.
+- **Detection:** Read the error path of every write. Ask what happens to each field's value when
+  the request returns an error.
+- **Exception:** None. The write failed; the person's work is the only thing that must not.
+- **Preferred response:** Keep the values, show the error beside the field or the form, and leave
+  the retry where the person already is.
+
+#### FRM-003 - A field that validates too late
+- **Level:** CONTEXTUAL WARNING
+- **Rule:** A person is told what is wrong when they can still act on it, not after they have
+  committed.
+- **Failure signature:** Nothing happens while the person types, and the whole form turns red on
+  submit; or a field is flagged empty on blur while the person is still in the middle of the form
+  and did not ask.
+- **Detection:** Fill a form deliberately wrong and note when the first sign of it appears, and
+  how many times the person is told.
+- **Exception:** A field whose validity only exists once the form is complete.
+- **Preferred response:** Validate the field when it leaves the person's hand or on submit, show
+  it there once, and do not repeat it louder. The first sign of an error is a correction, not an
+  indictment.
+
 ### Interaction and platform feel
 
 #### INT-001 - No feedback on press
@@ -310,6 +397,59 @@ does not apply, and what to do instead.
 - **Preferred response:** Reach for a template when the interaction genuinely differs, not to make
   one platform resemble another.
 
+### Navigation and flow
+
+#### NAV-001 - A screen that builds its own navigation
+- **Level:** HARD BAN
+- **Rule:** The application has one navigation structure, and every screen lives inside it.
+- **Failure signature:** A page that draws its own back button beside the shell's, its own tab
+  bar, or its own header where the shell already carries one. Two backs on a screen are two
+  applications arguing.
+- **Detection:** `grep -rn 'NavigationView\|TabBar\|NavigationBar' --include='*.xaml'` and compare
+  against the screens that sit inside the shell. A control at the leaf is the finding.
+- **Exception:** A screen that is itself a navigation surface - a settings root that owns its own
+  sub-navigation - stated as such.
+- **Preferred response:** The shell carries the structure; the screen carries the content and its
+  actions in the command bar or header the shell leaves for them.
+
+#### NAV-002 - A back that does not go back
+- **Level:** HARD BAN
+- **Rule:** Back returns to where the person was, on every head, with the position they left.
+- **Failure signature:** A hand-rolled back button that pops two pages, that resets a list to the
+  top, that re-runs a query the person has already filtered, or that is missing on a head where
+  the platform does not provide one.
+- **Detection:** `grep -rn 'GoBack\|Pop(' --include='*.cs'` and walk each call's argument. Then
+  drive the screen: filter, scroll, push, back - and ask whether the filter and the scroll
+  survived.
+- **Exception:** None for the system back. Where a head provides no back at all, the screen
+  provides one; that is the rule's other half.
+- **Preferred response:** Let the navigation stack own back, and keep state in the feed so a
+  return restores it. A back button that re-runs the world is not a back button.
+
+#### NAV-003 - A dead end
+- **Level:** AVOID BY DEFAULT
+- **Rule:** A screen either completes its action, leads somewhere, or says why it cannot go on.
+- **Failure signature:** A detail view with no action and no path forward; an error screen with
+  no retry; an empty state with no verb. The person arrives and the screen is finished with them.
+- **Detection:** For every leaf screen, name its exit: the action it completes, the route it
+  offers, or the reason it states. No name is the finding.
+- **Exception:** A terminal screen the product means to be terminal - the receipt after a
+  purchase, stated as such.
+- **Preferred response:** Give the screen one honest exit. A retry on the error, a verb on the
+  empty state, an action on the detail.
+
+#### NAV-004 - A destructive path as short as the accidental one
+- **Level:** HARD BAN
+- **Rule:** What cannot be undone gets a step that a thumb cannot reach by accident.
+- **Failure signature:** A Delete in a row's context menu that fires on one tap, a "Clear all"
+  beside the items it clears, a send that a stray thumb can land on.
+- **Detection:** Look for every irreversible action and count the taps between the first touch
+  and the point of no return. One is the finding, unless it is guarded by an undo that actually
+  undoes.
+- **Exception:** An action with a working undo, where the undo is the guard.
+- **Preferred response:** Confirmation for the truly irreversible, a confirm that names what will
+  be lost; undo for the rest. The length of the path is the price of the mistake.
+
 ### Accessibility
 
 #### A11Y-001 - Contrast below WCAG AA
@@ -354,6 +494,46 @@ does not apply, and what to do instead.
 - **Exception:** Motion that carries meaning no static state can carry, reduced rather than removed.
 - **Preferred response:** Read the preference once, expose it as state, and let transitions collapse
   to a cut.
+
+### Visual consistency
+
+#### VIS-001 - A third variation
+- **Level:** AVOID BY DEFAULT
+- **Rule:** The same thing looks and behaves the same everywhere. A second way of doing a
+  recurring thing is a finding; a third way is a broken system.
+- **Failure signature:** One confirm is a `ContentDialog`, the next is an inline banner, the next
+  is a popup of a different shape; one screen's empty state is an icon and a verb, the next is a
+  bare "No items".
+- **Detection:** `grep -rn 'ContentDialog' --include='*.xaml' --include='*.cs'`, and for each
+  recurring job - confirm, toast, empty state, loading - list the variations the app actually
+  carries. Two or more is the finding.
+- **Exception:** A variation the content genuinely forces - a confirm that must show a list,
+  where the small confirm cannot.
+- **Preferred response:** One pattern per job, in a shared control or style the screens reference.
+  Flag the inconsistency; do not invent the third variation to fix it.
+
+#### VIS-002 - A treatment applied to some and not all
+- **Level:** AVOID BY DEFAULT
+- **Rule:** A visual decision made once is a decision made everywhere, or not at all.
+- **Failure signature:** Corner radius on the cards in one screen and square ones in the next;
+  dividers between rows here and none there; shadows on one surface and not its neighbours.
+- **Detection:** For each visual treatment in the app - radius, divider, shadow, uppercase
+  label - name the screens that carry it and the ones that do not, and ask whether the difference
+  is a decision or an accident.
+- **Exception:** A difference that tracks a real difference - a group header is a header.
+- **Preferred response:** The treatment, applied or removed. A mixed treatment is not an
+  aesthetic; it is a decision that was not finished.
+
+#### VIS-003 - An icon from two sets
+- **Level:** AVOID BY DEFAULT
+- **Rule:** A screen carries one icon language: one set, one weight, one size.
+- **Failure signature:** A sharp filled glyph beside a thin outlined one; a 16px icon beside a
+  24px one doing the same job; an emoji where the set has a glyph.
+- **Detection:** Collect the icons a screen uses - asset names and sizes - and compare their
+  weight and size. Two families, or one job at two sizes, is the finding.
+- **Exception:** None. A brand's own icon set is one set, which is the rule's point.
+- **Preferred response:** One set for the app, sized by role. Where an icon is missing from the
+  set, it is missing; a borrowed glyph is what reads as unfinished.
 
 ### Content
 
@@ -410,6 +590,17 @@ grep -rnE '\.Result\b|\.Wait\(\)|Thread\.Sleep' --include='*.cs' .
 grep -rn 'AutomationProperties' --include='*.xaml' .
 grep -rniE 'lorem|jane doe|john doe|TODO|FIXME|example\.com' --include='*.xaml' --include='*.cs' .
 grep -rn 'PlaceholderText=' --include='*.xaml' .
+
+# Hierarchy and forms                             HIE-001 FRM-002
+grep -rn 'FilledButtonStyle\|ContainedButtonStyle\|AccentButtonStyle' --include='*.xaml' .
+grep -rn 'MessageBox\|ContentDialog' --include='*.cs' .
+
+# Navigation                                      NAV-001 NAV-002
+grep -rn 'NavigationView\|TabBar\|NavigationBar' --include='*.xaml' .
+grep -rn 'GoBack\|Pop(' --include='*.cs' .
+
+# Consistency                                     VIS-001
+grep -rn 'ContentDialog' --include='*.xaml' --include='*.cs' .
 ```
 
 A hit is a question, never a verdict. Open the file and decide.
@@ -421,11 +612,20 @@ evidence rather than assertion:
 
 1. `uno_health` - confirm which workspace the server resolved, before anything else.
 2. `uno_app_start`, then `uno_app_get_screenshot` at a narrow, a medium, and a wide width - LAY-006.
+   On the narrow shot, name where the eye lands first and where the primary action sits - HIE-001,
+   HIE-002, HIE-003.
 3. Screenshot again in the other theme - THM-004, A11Y-001.
 4. `uno_app_visualtree_snapshot` - element depth per row for LST-002, and the realised item count
    for LST-001.
 5. `uno_app_key_press` with Tab only, following focus across the screen - A11Y-003.
 6. Drive the screen into its empty, loading, and error states and shoot each - STA-001, STA-002.
+7. Fill a form deliberately wrong, submit, and watch where the first error lands and where focus
+   goes - FRM-001, FRM-003. Repeat the save with the network cut and watch what happens to the
+   typed values - FRM-002.
+8. Push a screen, filter or scroll it, and press back on each head: did the position and the
+   filter survive, and was there one back, not two - NAV-001, NAV-002.
+9. Walk three screens that carry the same job - a confirm, a toast, an empty state - and name
+   their variations - VIS-001, VIS-002, VIS-003.
 
 Where the MCP is not available, say so and review from the source, and mark the visual findings as
 unverified rather than passing them silently.
